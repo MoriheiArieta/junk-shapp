@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "977880012138",
+    "project_id": "junk-shapp-35eea",
+    "storage_bucket": "junk-shapp-35eea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977880012138:android:52f759b4fe5c94411a0113",
+        "android_client_info": {
+          "package_name": "com.lb.junkshapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAexWeI5_lPvR3VpbQfbVrGHPiIhOOkUSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

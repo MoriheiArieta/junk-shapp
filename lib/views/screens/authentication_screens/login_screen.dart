@@ -1,8 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:junk_shapp/controllers/auth_controller.dart';
+import 'package:junk_shapp/views/screens/owner_screens/owner_home_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> _formKey =
+      GlobalKey<FormState>(); // for validation
+
+  final AuthController _authController = AuthController();
+
+  // user input
+  late String email;
+  late String password;
+
+  // state manipulation variables
+  bool _isLoading = false;
+  bool _isObscure = true; // to hide password user input
+
+  // functions
+  loginUser() async {
+    setState(() {
+      _isLoading = true; // to show circularProgressIndicator
+    });
+    String result = await _authController.loginUser(
+        email, password); // to call loginUser from auth controller
+    if (result == 'pass') {
+      Future.delayed(
+        Duration.zero,
+        () {
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return OwnerHomeScreen();
+                },
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: const Color(0xfffe7800),
+                content: Text(
+                  "Successfully Logged In!",
+                  style: GoogleFonts.lato(color: Colors.white),
+                ),
+              ),
+            );
+          }
+        },
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      // failed login attempts
+      setState(() {
+        _isLoading = false;
+      });
+
+      Future.delayed(
+        Duration.zero,
+        () {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: const Color(0xfffe7800),
+                content: Text(
+                  result,
+                  style: GoogleFonts.lato(color: Colors.white),
+                ),
+              ),
+            );
+          }
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +94,7 @@ class LoginScreen extends StatelessWidget {
         child: Center(
           child: SingleChildScrollView(
             child: Form(
+              key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -48,6 +127,17 @@ class LoginScreen extends StatelessWidget {
                   //   ),
                   // ),
                   TextFormField(
+                    onChanged: (value) {
+                      email = value;
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        // validate user input to force valid input
+                        return 'Enter your email';
+                      } else {
+                        return null;
+                      }
+                    },
                     decoration: InputDecoration(
                       fillColor: Colors.white,
                       filled: true,
@@ -76,6 +166,18 @@ class LoginScreen extends StatelessWidget {
                   //   ),
                   // ),
                   TextFormField(
+                    obscureText: _isObscure,
+                    onChanged: (value) {
+                      password = value;
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        // validate user input to force valid input
+                        return 'Enter your password';
+                      } else {
+                        return null;
+                      }
+                    },
                     decoration: InputDecoration(
                       fillColor: Colors.white,
                       filled: true,
@@ -88,6 +190,17 @@ class LoginScreen extends StatelessWidget {
                         fontSize: 16,
                         letterSpacing: 0.1,
                       ),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            // for hiding/showing password
+                            _isObscure = !_isObscure;
+                          });
+                        },
+                        icon: Icon(
+                          _isObscure ? Icons.visibility_off : Icons.visibility,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -97,6 +210,19 @@ class LoginScreen extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       //LOGIN USER
+                      if (_formKey.currentState!.validate()) {
+                        loginUser();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: const Color(0xfffe7800),
+                            content: Text(
+                              "Failed to Log In.",
+                              style: GoogleFonts.lato(color: Colors.white),
+                            ),
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       width: 316,
@@ -188,13 +314,17 @@ class LoginScreen extends StatelessWidget {
 
                           // text
                           Center(
-                            child: Text(
-                              "Sign In",
-                              style: GoogleFonts.quicksand(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
+                            child: _isLoading
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Text(
+                                    "Sign In",
+                                    style: GoogleFonts.quicksand(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                           ),
                         ],
                       ),
