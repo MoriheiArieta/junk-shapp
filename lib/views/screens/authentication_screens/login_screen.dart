@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:junk_shapp/controllers/auth_controller.dart';
 import 'package:junk_shapp/views/screens/authentication_screens/register_screen.dart';
 import 'package:junk_shapp/views/screens/non_owner_screens/non_owner_home_screen.dart';
-import 'package:junk_shapp/views/screens/owner_screens/owner_home_screen.dart';
+import 'package:junk_shapp/views/screens/owner_screens/junk_shop_list_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return OwnerHomeScreen();
+                    return JunkShopListScreen();
                   },
                 ),
               );

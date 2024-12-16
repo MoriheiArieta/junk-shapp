@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:junk_shapp/views/screens/owner_screens/widgets/junk_shop_list_item_widget.dart';
 
-class OwnerHomeScreen extends StatefulWidget {
+class JunkShopListScreen extends StatefulWidget {
+  const JunkShopListScreen({super.key});
+
   @override
-  State<OwnerHomeScreen> createState() => _OwnerHomeScreenState();
+  State<JunkShopListScreen> createState() => _JunkShopListScreenState();
 }
 
-class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
+class _JunkShopListScreenState extends State<JunkShopListScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -99,7 +101,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                 color: Colors.white,
                 size: 32,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               Text(
@@ -113,7 +115,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
             ],
           ),
         ),
-        backgroundColor: Color(0xFFFE7800),
+        backgroundColor: const Color(0xFFFE7800),
       ),
       body: Stack(
         children: [
@@ -143,8 +145,8 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                           : SingleChildScrollView(
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    bottom:
-                                        80), // Add padding to prevent overlap
+                                  bottom: 80,
+                                ), // Add padding to prevent overlap
                                 child: Column(
                                   children: [
                                     ListView.builder(
@@ -153,50 +155,9 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) {
-                                        final shop = _junkShops[index];
-                                        final shopName = shop['junkShopName'] ??
-                                            "Unknown Shop";
-                                        final shopBalance =
-                                            shop['junkShopBalance'] ?? 0;
-
-                                        return Card(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 16),
-                                          child: Column(
-                                            children: [
-                                              SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.2,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: Image.network(
-                                                  shop['junkShopImage'],
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                              ListTile(
-                                                title: Text(
-                                                  shopName,
-                                                  style: GoogleFonts.quicksand(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                subtitle: Text(
-                                                  "Balance: Php ${shopBalance.toStringAsFixed(2)}",
-                                                  style: GoogleFonts.quicksand(
-                                                      fontSize: 16),
-                                                ),
-                                                onTap: () {
-                                                  // Navigate to a detailed screen or perform an action
-                                                  // print("Tapped on shop: $shopName");
-                                                },
-                                              ),
-                                            ],
-                                          ),
+                                        final junkShopData = _junkShops[index];
+                                        return JunkShopListItemWidget(
+                                          junkShopData: junkShopData,
                                         );
                                       },
                                     ),
@@ -225,7 +186,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                     //     Color(0xFFFDB777),
                     //   ],
                     // ),
-                    color: Color(0xFFFE7800),
+                    color: const Color(0xFFFE7800),
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.grey,
