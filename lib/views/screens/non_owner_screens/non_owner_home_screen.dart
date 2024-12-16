@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+class NonOwnerHomeScreen extends StatelessWidget {
+  const NonOwnerHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +10,7 @@ class MyWidget extends StatelessWidget {
       backgroundColor: Colors.orange,
       body: Center(
         child: Text(
-          'Owner Screen',
+          'Non Owner Screen',
           style: GoogleFonts.quicksand(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -19,6 +19,5 @@ class MyWidget extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }

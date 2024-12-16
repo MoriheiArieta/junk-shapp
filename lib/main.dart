@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:junk_shapp/views/screens/authentication_screens/login_screen.dart';
+import 'package:junk_shapp/views/screens/authentication_screens/register_screen.dart';
 
 void main() async {
-  // make async to wait for firebase to intialize before running app
+  // make async to wafracfr firebase to intialize before running app
   WidgetsFlutterBinding
       .ensureInitialized(); //makes sure widgets are initialized
+
   Platform.isAndroid
       ? await Firebase.initializeApp(
           name: "initFirebase",
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginScreen(),
+      home: const LoginScreen(),
     );
   }
 }

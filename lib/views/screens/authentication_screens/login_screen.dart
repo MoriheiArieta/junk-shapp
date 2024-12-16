@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:junk_shapp/controllers/auth_controller.dart';
+import 'package:junk_shapp/views/screens/authentication_screens/register_screen.dart';
+import 'package:junk_shapp/views/screens/non_owner_screens/non_owner_home_screen.dart';
 import 'package:junk_shapp/views/screens/owner_screens/owner_home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _formKey =
-      GlobalKey<FormState>(); // for validation
-
+  // controllers
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthController _authController = AuthController();
 
   // user input
@@ -21,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // state manipulation variables
   bool _isLoading = false;
   bool _isObscure = true; // to hide password user input
+  bool _isOwner = false;
 
   // functions
   loginUser() async {
@@ -30,18 +34,32 @@ class _LoginScreenState extends State<LoginScreen> {
     String result = await _authController.loginUser(
         email, password); // to call loginUser from auth controller
     if (result == 'pass') {
+      _isOwner = await _authController.getIsOwner(email);
+
       Future.delayed(
         Duration.zero,
         () {
           if (mounted) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return OwnerHomeScreen();
-                },
-              ),
-            );
+            if (_isOwner == true) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return OwnerHomeScreen();
+                  },
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const NonOwnerHomeScreen();
+                  },
+                ),
+              );
+            }
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: const Color(0xfffe7800),
@@ -346,7 +364,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          //REGISTER USER
+                          // to register screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const RegisterScreen();
+                              },
+                            ),
+                          );
                         },
                         child: Text(
                           'Sign Up Here',
