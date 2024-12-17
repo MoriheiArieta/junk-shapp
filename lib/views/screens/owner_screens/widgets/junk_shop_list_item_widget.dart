@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:junk_shapp/views/screens/junk_shop_main_screen.dart';
 
 class JunkShopListItemWidget extends StatelessWidget {
   final dynamic junkShopData;
@@ -11,7 +12,7 @@ class JunkShopListItemWidget extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Container(
         clipBehavior: Clip.antiAlias,
         width: screenWidth * 0.8,
@@ -28,7 +29,16 @@ class JunkShopListItemWidget extends StatelessWidget {
             ]),
         child: InkWell(
           onTap: () {
-            print(junkShopData['junkShopName']);
+            // print(junkShopData['junkShopName']);
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) {
+                return JunkShopMainScreen(
+                  junkShopData: junkShopData,
+                );
+              },
+            ));
+
+            // go to innder junkshophomescreen
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

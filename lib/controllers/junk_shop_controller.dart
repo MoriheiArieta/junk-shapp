@@ -20,6 +20,7 @@ class JunkShopController {
         'junkShopTransactions': [],
         'junkShopInventory': [],
         'junkShopStaff': [],
+        'junkShopTimestamp': DateTime.now().millisecondsSinceEpoch.toString(),
       });
       result = 'pass';
     } catch (e) {
