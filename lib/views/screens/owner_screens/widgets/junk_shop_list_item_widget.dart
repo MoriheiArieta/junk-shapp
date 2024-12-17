@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:junk_shapp/views/screens/junk_shop_main_screen.dart';
 
 class JunkShopListItemWidget extends StatelessWidget {
@@ -11,6 +12,7 @@ class JunkShopListItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final NumberFormat currencyFormatter = NumberFormat("#,##0.00");
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Container(
@@ -72,7 +74,8 @@ class JunkShopListItemWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 12),
                 child: Text(
-                  "Balance: Php ${junkShopData['junkShopBalance']!.toStringAsFixed(2)}",
+                  // "Balance: Php ${junkShopData['junkShopBalance']!.toStringAsFixed(2)}",
+                  "₱ ${currencyFormatter.format(junkShopData['junkShopBalance'] ?? 0)}",
                   style: GoogleFonts.quicksand(
                     fontSize: 14,
                     // fontWeight: FontWeight.w200,

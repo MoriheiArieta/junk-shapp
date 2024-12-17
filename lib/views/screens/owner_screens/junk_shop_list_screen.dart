@@ -80,8 +80,9 @@ class JunkShopListScreen extends StatelessWidget {
               // Static box with owner name and junk shop count
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16.0),
-                color: const Color(0xFFFE7800).withOpacity(0.1),
+                color: const Color(0xFFffaf47),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -90,20 +91,21 @@ class JunkShopListScreen extends StatelessWidget {
                       style: GoogleFonts.quicksand(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF333333),
+                        // color: const Color(0xFF333333),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Number of Junk Shops: $junkShopCount',
                       style: GoogleFonts.quicksand(
-                        fontSize: 12,
-                        color: const Color(0xFF666666),
+                        fontSize: 14,
+                        // color: const Color(0xFF666666),
                       ),
                     ),
                   ],
                 ),
               ),
+              // Divider(),
 
               // Junk shop list
               Expanded(
@@ -177,7 +179,7 @@ class JunkShopListScreen extends StatelessWidget {
               },
             ));
           },
-          backgroundColor: const Color(0xFFFE7800),
+          backgroundColor: const Color(0xFFfe7800),
           child: Image.asset(
             'assets/icons/new_junk_shop.png',
             color: Colors.white,
