@@ -55,44 +55,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       _isLoading = true;
     });
-    await registerJunkShop();
-    // awaits for function return from
-    String result = await _authController.registerNewOwner(
-        _userData["fullName"]!,
-        _userData["email"]!,
-        _userData["password"]!,
-        junkShopId);
+    String regResult = await registerJunkShop();
 
-    // pass? show snackbar indicating user has been successfully created: show error
-    if (result == 'pass') {
-      Future.delayed(
-        Duration.zero,
-        () {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: const Color(0xfffe7800),
-                content: Text(
-                  "User: ${_userData['fullName']} and \nJunk shop: ${_junkShopData['junkShopName']} successfully created.",
-                  style: GoogleFonts.lato(color: Colors.white),
-                ),
-              ),
-            );
+    if (regResult == 'pass') {
+      String result = await _authController.registerNewOwner(
+          _userData["fullName"]!,
+          _userData["email"]!,
+          _userData["password"]!,
+          junkShopId);
+
+      // pass? show snackbar indicating user has been successfully created: show error
+      if (result == 'pass') {
+        Future.delayed(
+          Duration.zero,
+          () {
             if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: const Color(0xfffe7800),
+                  content: Text(
+                    "User: ${_userData['fullName']} and \nJunk shop: ${_junkShopData['junkShopName']} successfully created.",
+                    style: GoogleFonts.lato(color: Colors.white),
+                  ),
+                ),
+              );
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
                   return const LoginScreen();
                 },
               ));
             }
-          }
-        },
-      );
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
+          },
+        );
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
 
+        Future.delayed(
+          Duration.zero,
+          () {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: const Color(0xfffe7800),
+                  content: Text(
+                    result,
+                    style: GoogleFonts.lato(color: Colors.white),
+                  ),
+                ),
+              );
+            }
+          },
+        );
+      }
+    } else {
       Future.delayed(
         Duration.zero,
         () {
@@ -101,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               SnackBar(
                 backgroundColor: const Color(0xfffe7800),
                 content: Text(
-                  result,
+                  regResult,
                   style: GoogleFonts.lato(color: Colors.white),
                 ),
               ),
@@ -110,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         },
       );
     }
+    // awaits for function return from
   }
 
   uploadImageToStorage(dynamic image) async {
@@ -157,11 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _junkShopData['junkShopName']!,
         double.parse(_junkShopData['junkShopBalance']!),
         junkShopId);
-    if (result == 'pass') {
-      // setState(() {
-      //   _isLoading = false;
-      // });
-    } // need error checking here
+    return result;
   }
 
   // for page navigation on register screen
@@ -774,13 +788,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               width: 380,
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   // BACK BUTTON
                                   InkWell(
                                     onTap: () {
-                                      // _junkShopData['junkShopImage'] =
-                                      //     junkshopImage;
+                                      _junkShopData['junkShopImage'] =
+                                          junkshopImage;
                                       _junkShopFormKey.currentState!.save();
                                       // registerOwner();
                                       setState(() {
@@ -789,7 +803,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       _goToPage(0);
                                     },
                                     child: Container(
-                                      width: 180,
+                                      width: screenWidth * 0.4,
                                       height: 50,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(30),
@@ -891,7 +905,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       }
                                     },
                                     child: Container(
-                                      width: 180,
+                                      width: screenWidth * 0.4,
                                       height: 50,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(30),

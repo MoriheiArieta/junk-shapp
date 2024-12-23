@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       // backgroundColor: Color(0xff32de84),
-      backgroundColor: Colors.white.withOpacity(0.96),
+      // backgroundColor: Colors.white.withOpacity(0.96),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Center(
@@ -134,16 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: screenHeight * .04,
                   ),
                   // EMAIL
-                  // Align(
-                  //   alignment: Alignment.topLeft,
-                  //   child: Text(
-                  //     "Email",
-                  //     style: GoogleFonts.quicksand(
-                  //         // fontSize: 24,
-                  //         fontWeight: FontWeight.w600,
-                  //         letterSpacing: 0.2),
-                  //   ),
-                  // ),
+                  
                   TextFormField(
                     onChanged: (value) {
                       email = value;
@@ -173,16 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: screenHeight * .02,
                   ),
                   // PASSWORD
-                  // Align(
-                  //   alignment: Alignment.topLeft,
-                  //   child: Text(
-                  //     "Password",
-                  //     style: GoogleFonts.quicksand(
-                  //         // fontSize: 24,
-                  //         fontWeight: FontWeight.w600,
-                  //         letterSpacing: 0.2),
-                  //   ),
-                  // ),
+                  
                   TextFormField(
                     obscureText: _isObscure,
                     onChanged: (value) {

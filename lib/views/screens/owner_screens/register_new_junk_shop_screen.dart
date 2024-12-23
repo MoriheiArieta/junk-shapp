@@ -156,7 +156,7 @@ class _RegisterNewJunkShopScreenState extends State<RegisterNewJunkShopScreen> {
         title: Text(
           "Add Junk Shop",
           style: GoogleFonts.quicksand(
-            // fontSize: 16,
+            fontSize: 20,
             letterSpacing: 0.1,
             fontWeight: FontWeight.bold,
           ),

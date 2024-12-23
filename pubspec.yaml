@@ -47,6 +47,7 @@ dependencies:
   cached_network_image: ^3.4.1
   intl: ^0.20.1
   auto_size_text: ^3.0.0
+  # cloud_functions: ^5.2.0
 
 dev_dependencies:
   flutter_test:

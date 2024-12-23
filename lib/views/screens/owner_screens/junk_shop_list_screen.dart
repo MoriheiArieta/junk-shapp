@@ -29,15 +29,17 @@ class JunkShopListScreen extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
+        // toolbarHeight: 40,
         title: Text(
           'Junk Shop List',
           style: GoogleFonts.quicksand(
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.1,
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
+            // letterSpacing: 0.1,
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFFFE7800),
+        backgroundColor: const Color(0xffff6600),
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
@@ -77,10 +79,15 @@ class JunkShopListScreen extends StatelessWidget {
 
           return Column(
             children: [
+              const Divider(
+                thickness: 1,
+                height: 1,
+                color: Colors.deepOrange,
+              ),
               // Static box with owner name and junk shop count
               Container(
                 width: double.infinity,
-                color: const Color(0xFFffaf47),
+                color: const Color(0xffff6600),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Column(
@@ -89,24 +96,24 @@ class JunkShopListScreen extends StatelessWidget {
                     Text(
                       'Owner: $ownerName',
                       style: GoogleFonts.quicksand(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        // color: const Color(0xFF333333),
+                        fontSize: 14,
+                        // fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    // const SizedBox(height: 4),
                     Text(
                       'Number of Junk Shops: $junkShopCount',
                       style: GoogleFonts.quicksand(
-                        fontSize: 14,
-                        // color: const Color(0xFF666666),
+                        fontSize: 12,
+                        color: Colors.white,
                       ),
                     ),
                   ],
                 ),
               ),
               // Divider(),
-
+              const SizedBox(height: 8),
               // Junk shop list
               Expanded(
                 child: junkShopIds.isEmpty
@@ -167,24 +174,20 @@ class JunkShopListScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: SizedBox(
-        height: 68, // Desired height
-        width: 68, // Desired width
-        child: FloatingActionButton(
-          onPressed: () {
-            // Handle adding new junk shop
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) {
-                return const RegisterNewJunkShopScreen();
-              },
-            ));
-          },
-          backgroundColor: const Color(0xFFfe7800),
-          child: Image.asset(
-            'assets/icons/new_junk_shop.png',
-            color: Colors.white,
-            width: 44,
-          ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) {
+              return const RegisterNewJunkShopScreen();
+            },
+          ));
+        },
+        backgroundColor: const Color(0xFFfe6600),
+        shape: const CircleBorder(),
+        child: const Icon(
+          Icons.add,
+          size: 40,
+          color: Colors.white,
         ),
       ),
     );
