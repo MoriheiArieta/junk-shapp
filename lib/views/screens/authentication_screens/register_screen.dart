@@ -293,10 +293,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             TextFormField(
                               initialValue: _userData['email'],
                               onSaved: (newValue) {
-                                _userData['email'] = newValue!;
+                                _userData['email'] = newValue!.trim();
                               },
                               onChanged: (value) {
-                                email = value;
+                                email = value.trim();
                               },
                               validator: (value) {
                                 if (value!.isEmpty) {

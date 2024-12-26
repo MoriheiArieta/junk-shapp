@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:junk_shapp/controllers/transaction_controller.dart';
+import 'package:junk_shapp/views/screens/buy_items.dart';
+import 'package:junk_shapp/views/screens/owner_screens/add_inventory_entry.dart';
+import 'package:junk_shapp/views/screens/register_new_staff_screen.dart';
 
 class OwnerHomeScreen extends StatefulWidget {
   final dynamic junkShopData;
@@ -433,13 +436,14 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                                                     )
                                                   : Text(
                                                       "Withdraw Funds",
-                                                      style:
-                                                          GoogleFonts.quicksand(
-                                                              color:
-                                                                  Colors.white,
+                                                      style: GoogleFonts
+                                                          .quicksand(
+                                                              color: const Color(
+                                                                  0xfffe6600),
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold),
+                                                                      .bold,
+                                                              fontSize: 20),
                                                     ),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
@@ -524,7 +528,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
 
                                                                 _pop();
                                                                 _showSnackBar(
-                                                                    "Funds added successfully!");
+                                                                    "Withdraw successful!");
                                                               } else {
                                                                 // Invalid input
                                                                 ScaffoldMessenger.of(
@@ -597,102 +601,20 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                                   ),
                                 ),
 
-                                // Add inventory
-                                InkWell(
-                                  onTap: () {},
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Image.asset(
-                                        'assets/icons/add_inventory.png',
-                                        width: screenWidth * 0.10,
-                                        height: screenHeight * 0.056,
-                                        color: const Color(0xfffe6600),
-                                        fit: BoxFit.scaleDown,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Flexible(
-                                        child: Text(
-                                          "Add Item Category",
-                                          style: GoogleFonts.quicksand(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.deepOrange.shade900,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 3,
-                                          overflow: TextOverflow.visible,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                // add personnel
-                                InkWell(
-                                  onTap: () {},
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Image.asset(
-                                        'assets/icons/add_personnel.png',
-                                        width: screenWidth * 0.10,
-                                        height: screenHeight * 0.056,
-                                        color: const Color(0xfffe6600),
-                                        fit: BoxFit.fitWidth,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Flexible(
-                                        child: Text(
-                                          "Add Personnel",
-                                          style: GoogleFonts.quicksand(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.deepOrange.shade900,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 3,
-                                          overflow: TextOverflow.visible,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                // pay personnel
-                                InkWell(
-                                  onTap: () {},
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Image.asset(
-                                        'assets/icons/pay_personnel.png',
-                                        width: screenWidth * 0.12,
-                                        height: screenHeight * 0.056,
-                                        color: const Color(0xfffe6600),
-                                        fit: BoxFit.scaleDown,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Flexible(
-                                        child: Text(
-                                          "Pay Personnel",
-                                          style: GoogleFonts.quicksand(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.deepOrange.shade900,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 3,
-                                          overflow: TextOverflow.visible,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
                                 // buy items
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return BuyItems(
+                                            junkShopData: junkShopData,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -738,6 +660,122 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                                       Flexible(
                                         child: Text(
                                           "Sell Items",
+                                          style: GoogleFonts.quicksand(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.deepOrange.shade900,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.visible,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // pay personnel
+                                InkWell(
+                                  onTap: () {},
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/pay_personnel.png',
+                                        width: screenWidth * 0.12,
+                                        height: screenHeight * 0.056,
+                                        color: const Color(0xfffe6600),
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Flexible(
+                                        child: Text(
+                                          "Pay Personnel",
+                                          style: GoogleFonts.quicksand(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.deepOrange.shade900,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.visible,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // Add inventory
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return AddInventoryEntry(
+                                            junkShopData: junkShopData,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/add_inventory.png',
+                                        width: screenWidth * 0.10,
+                                        height: screenHeight * 0.056,
+                                        color: const Color(0xfffe6600),
+                                        fit: BoxFit.scaleDown,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Flexible(
+                                        child: Text(
+                                          "Add Item Category",
+                                          style: GoogleFonts.quicksand(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.deepOrange.shade900,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.visible,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // add personnel
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return RegisterNewStaffScreen(
+                                            junkShopId:
+                                                junkShopData['junkShopId'],
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/add_personnel.png',
+                                        width: screenWidth * 0.10,
+                                        height: screenHeight * 0.056,
+                                        color: const Color(0xfffe6600),
+                                        fit: BoxFit.fitWidth,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Flexible(
+                                        child: Text(
+                                          "Add Personnel",
                                           style: GoogleFonts.quicksand(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,

@@ -9,7 +9,7 @@ class TransactionController {
     String result = 'Failed to add transaction entry.';
     DateTime _asOf = DateTime.now();
     String _formattedDateTime =
-        DateFormat('MMMM dd yyyy HH:mm a').format(_asOf);
+        DateFormat('MMMM dd yyyy HH:mm:ss a').format(_asOf);
     Map<String, dynamic> entryData = {
       'transactionTimestamp': _formattedDateTime,
       'transactionType': transactionType,

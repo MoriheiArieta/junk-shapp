@@ -29,4 +29,16 @@ class JunkShopController {
 
     return result;
   }
+
+  Future<String> deleteJunkShop(String junkShopId) async {
+    String result = 'Failed to delete junk shop.';
+    try {
+      await _firestore.collection('junk_shops').doc(junkShopId).delete();
+      result = 'pass';
+    } catch (e) {
+      result = e.toString();
+    }
+
+    return result;
+  }
 }

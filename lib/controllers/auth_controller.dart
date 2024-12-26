@@ -3,8 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthController {
   final FirebaseAuth _auth = FirebaseAuth.instance; // for login authentication
-  final FirebaseFirestore _firestore =
-      FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   get currentUserId => null; // for new user registration
 

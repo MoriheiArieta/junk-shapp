@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:junk_shapp/views/screens/owner_screens/register_new_junk_shop_screen.dart';
 import 'package:junk_shapp/views/screens/owner_screens/widgets/junk_shop_list_item_widget.dart';
 
 class JunkShopListScreen extends StatelessWidget {
-  const JunkShopListScreen({super.key});
+  final dynamic user;
+
+  const JunkShopListScreen({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    // final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
       return Scaffold(
@@ -164,6 +166,7 @@ class JunkShopListScreen extends StatelessWidget {
 
                               return JunkShopListItemWidget(
                                 junkShopData: junkShopData,
+                                userData: userData,
                               );
                             },
                           );

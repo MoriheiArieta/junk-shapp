@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:junk_shapp/controllers/auth_controller.dart';
@@ -16,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // controllers
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthController _authController = AuthController();
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // user input
   late String email;
@@ -29,23 +32,33 @@ class _LoginScreenState extends State<LoginScreen> {
   // functions
   loginUser() async {
     setState(() {
-      _isLoading = true; // to show circularProgressIndicator
+      _isLoading = true; // Show loading indicator
     });
-    String result = await _authController.loginUser(
-        email, password); // to call loginUser from auth controller
-    if (result == 'pass') {
-      _isOwner = await _authController.getIsOwner(email);
 
-      Future.delayed(
-        Duration.zero,
-        () {
+    // Trim email before use
+    String trimmedEmail = email.trim();
+    String trimmedPassword = password.trim();
+
+    // Attempt login
+    String result =
+        await _authController.loginUser(trimmedEmail, trimmedPassword);
+    if (result == 'pass') {
+      final user = FirebaseAuth.instance.currentUser;
+
+      // Ensure the current user is not null
+      if (user != null && user.email == trimmedEmail) {
+        _isOwner = await _authController.getIsOwner(trimmedEmail);
+
+        Future.delayed(Duration.zero, () {
           if (mounted) {
-            if (_isOwner == true) {
+            if (_isOwner) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return const JunkShopListScreen();
+                    return JunkShopListScreen(
+                      user: user,
+                    );
                   },
                 ),
               );
@@ -70,34 +83,39 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             );
           }
-        },
-      );
-      setState(() {
-        _isLoading = false;
-      });
+        });
+      } else {
+        // Handle case where user email doesn't match the authenticated email
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xfffe7800),
+            content: Text(
+              "Authentication mismatch. Please try again.",
+              style: GoogleFonts.lato(color: Colors.white),
+            ),
+          ),
+        );
+      }
     } else {
-      // failed login attempts
-      setState(() {
-        _isLoading = false;
-      });
-
-      Future.delayed(
-        Duration.zero,
-        () {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: const Color(0xfffe7800),
-                content: Text(
-                  result,
-                  style: GoogleFonts.lato(color: Colors.white),
-                ),
+      // Show error message for failed login attempts
+      Future.delayed(Duration.zero, () {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xfffe7800),
+              content: Text(
+                result,
+                style: GoogleFonts.lato(color: Colors.white),
               ),
-            );
-          }
-        },
-      );
+            ),
+          );
+        }
+      });
     }
+
+    setState(() {
+      _isLoading = false; // Hide loading indicator
+    });
   }
 
   @override
@@ -134,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: screenHeight * .04,
                   ),
                   // EMAIL
-                  
+
                   TextFormField(
                     onChanged: (value) {
                       email = value;
@@ -164,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: screenHeight * .02,
                   ),
                   // PASSWORD
-                  
+
                   TextFormField(
                     obscureText: _isObscure,
                     onChanged: (value) {

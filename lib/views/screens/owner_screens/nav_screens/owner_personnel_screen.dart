@@ -260,6 +260,9 @@ class _OwnerPersonnelScreenState extends State<OwnerPersonnelScreen> {
                                         final personnel =
                                             filteredPersonnel[index];
                                         return ListTile(
+                                          shape: const Border(
+                                            bottom: BorderSide(),
+                                          ),
                                           leading: CachedNetworkImage(
                                             imageUrl:
                                                 personnel['profileImage'] ?? '',
@@ -267,7 +270,7 @@ class _OwnerPersonnelScreenState extends State<OwnerPersonnelScreen> {
                                                 (context, imageProvider) =>
                                                     CircleAvatar(
                                               backgroundImage: imageProvider,
-                                              radius: 20,
+                                              radius: 30,
                                             ),
                                             placeholder: (context, url) =>
                                                 const CircularProgressIndicator(),

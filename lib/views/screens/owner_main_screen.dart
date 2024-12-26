@@ -7,8 +7,11 @@ import 'package:junk_shapp/views/screens/owner_screens/nav_screens/owner_transac
 
 class OwnerMainScreen extends StatefulWidget {
   final dynamic junkShopData;
+  final dynamic userData;
 
-  const OwnerMainScreen({super.key, this.junkShopData});
+  const OwnerMainScreen({super.key, this.junkShopData, this.userData});
+
+  // const OwnerMainScreen({super.key, this.junkShopData});
 
   @override
   State<OwnerMainScreen> createState() => _OwnerMainScreenState();
@@ -31,7 +34,7 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
         junkShopData: widget.junkShopData,
       ),
       OwnerPersonnelScreen(junkShopData: widget.junkShopData),
-      OwnerProfileScreen(junkShopData: widget.junkShopData),
+      OwnerProfileScreen(userData: widget.userData),
     ];
   }
 

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:junk_shapp/controllers/inventory_controller.dart';
 
@@ -127,11 +128,14 @@ class _AddInventoryEntryState extends State<AddInventoryEntry> {
                         flex: 2,
                         child: TextFormField(
                           keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           onChanged: (value) {
                             setState(() {
                               // Safely parse the input
                               if (value.isNotEmpty) {
-                                _stock = double.parse(value);
+                                _stock = double.tryParse(value)!;
                               } else {
                                 _stock = 0.0; // Default to 0 if empty
                               }

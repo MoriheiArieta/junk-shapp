@@ -14,7 +14,7 @@ class OwnerTransactionsScreen extends StatefulWidget {
 }
 
 class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<Map<String, dynamic>> _sortTransactions(List<dynamic> transactions) {
     // Convert to List<Map<String, dynamic>> and parse timestamps
@@ -25,10 +25,10 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
 
     // Sort the transactions
     sortableTransactions.sort((a, b) {
-      DateTime dateA =
-          DateFormat('MMMM dd yyyy HH:mm a').parse(a['transactionTimestamp']);
-      DateTime dateB =
-          DateFormat('MMMM dd yyyy HH:mm a').parse(b['transactionTimestamp']);
+      DateTime dateA = DateFormat('MMMM dd yyyy HH:mm:ss a')
+          .parse(a['transactionTimestamp']);
+      DateTime dateB = DateFormat('MMMM dd yyyy HH:mm:ss a')
+          .parse(b['transactionTimestamp']);
       return dateB.compareTo(dateA); // Descending order (most recent first)
     });
 
@@ -77,7 +77,11 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
           );
 
           if (transactions.isEmpty) {
-            return const Center(child: Text('No transactions found'));
+            return const Center(
+                child: Text(
+              'No transactions found',
+              style: TextStyle(fontSize: 18),
+            ));
           }
 
           return Column(

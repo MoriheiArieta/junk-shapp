@@ -285,6 +285,44 @@ class _RegisterNewStaffScreenState extends State<RegisterNewStaffScreen> {
                     height: screenHeight * .02,
                   ),
 
+                  // PERSONNEL FULL NAME
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "Full Name",
+                      style: GoogleFonts.quicksand(
+                        fontSize: 16,
+                        letterSpacing: 0.2,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    onChanged: (value) {
+                      _fullName = value;
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        // validate user input to force valid input
+                        return 'Enter Full Name';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide.none,
+                      ),
+                      labelText: 'Enter full name here',
+                      labelStyle: GoogleFonts.quicksand(
+                        fontSize: 14,
+                        letterSpacing: 0.1,
+                      ),
+                    ),
+                  ),
+
                   // PERSONNEL ROLE
                   Align(
                     alignment: Alignment.topLeft,
@@ -316,45 +354,6 @@ class _RegisterNewStaffScreenState extends State<RegisterNewStaffScreen> {
                         borderSide: BorderSide.none,
                       ),
                       labelText: 'Eg. Cashier, Driver, etc.',
-                      labelStyle: GoogleFonts.quicksand(
-                        fontSize: 14,
-                        letterSpacing: 0.1,
-                      ),
-                    ),
-                  ),
-
-                  // PERSONNEL FULL NAME
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Full Name",
-                      style: GoogleFonts.quicksand(
-                        fontSize: 16,
-                        letterSpacing: 0.2,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-
-                  TextFormField(
-                    onChanged: (value) {
-                      _fullName = value;
-                    },
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        // validate user input to force valid input
-                        return 'Enter Full Name';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide.none,
-                      ),
-                      labelText: 'Enter full name here',
                       labelStyle: GoogleFonts.quicksand(
                         fontSize: 14,
                         letterSpacing: 0.1,
