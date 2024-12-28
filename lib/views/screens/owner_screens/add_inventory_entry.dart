@@ -235,17 +235,6 @@ class _AddInventoryEntryState extends State<AddInventoryEntry> {
                                   _category.toLowerCase());
 
                               if (categoryExists) {
-                                // Notify the user that the category exists
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(
-                                //     backgroundColor: Colors.red,
-                                //     content: Text(
-                                //       "Category already exists. Please enter a different category.",
-                                //       style:
-                                //           GoogleFonts.lato(color: Colors.white),
-                                //     ),
-                                //   ),
-                                // );
                                 _showSnackBar(
                                     "Category already exists. Please enter a different category.",
                                     Colors.red);
