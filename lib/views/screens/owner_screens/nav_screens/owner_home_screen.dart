@@ -7,6 +7,7 @@ import 'package:junk_shapp/controllers/transaction_controller.dart';
 import 'package:junk_shapp/views/screens/buy_items.dart';
 import 'package:junk_shapp/views/screens/owner_screens/add_inventory_entry.dart';
 import 'package:junk_shapp/views/screens/register_new_staff_screen.dart';
+import 'package:junk_shapp/views/screens/sell_items.dart';
 
 class OwnerHomeScreen extends StatefulWidget {
   final dynamic junkShopData;
@@ -645,7 +646,13 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
 
                                 //sell items
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return SellItems(
+                                          junkShopData: junkShopData);
+                                    }));
+                                  },
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
