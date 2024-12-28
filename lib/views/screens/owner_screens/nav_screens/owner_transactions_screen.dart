@@ -37,7 +37,7 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     DateTime _asOf = DateTime.now();
     String _formattedDateTime = DateFormat('MMMM dd yyyy').format(_asOf);

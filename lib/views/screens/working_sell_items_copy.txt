@@ -2,31 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:junk_shapp/controllers/inventory_controller.dart';
 import 'package:junk_shapp/controllers/transaction_controller.dart';
 
-class BuyItems extends StatefulWidget {
+class SellItems extends StatefulWidget {
   final dynamic junkShopData;
 
-  const BuyItems({super.key, this.junkShopData});
+  const SellItems({super.key, this.junkShopData});
 
   @override
-  State<BuyItems> createState() => _BuyItemsState();
+  State<SellItems> createState() => _SellItemsState();
 }
 
-class _BuyItemsState extends State<BuyItems> {
+class _SellItemsState extends State<SellItems> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _customCategoryController =
-      TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  final InventoryController _inventoryController = InventoryController();
   final TransactionController _transactionController = TransactionController();
   final TextEditingController _priceController = TextEditingController();
 
-  bool _isCustomCategory = false; // Toggle state for custom category
   String? _selectedCategory;
-  String? _customUnit; // State for custom unit of measurement
   num? enteredPrice;
 
   bool _isLoading = false;
@@ -59,32 +53,15 @@ class _BuyItemsState extends State<BuyItems> {
     );
   }
 
-  bool _categoryExists(String category, List<Map<String, dynamic>> inventory) {
-    return inventory.any((item) =>
-        item['category'].toString().toLowerCase() == category.toLowerCase());
-  }
-
   _pop() {
     Navigator.pop(context);
   }
 
   @override
   void dispose() {
-    _customCategoryController.dispose();
     _quantityController.dispose();
     _priceController.dispose();
     super.dispose();
-  }
-
-  void _switchCategoryMode(bool isCustom) {
-    setState(() {
-      _isCustomCategory = isCustom;
-      _customCategoryController.clear();
-      _quantityController.clear(); // Reset quantity only on mode switch
-      _selectedCategory = null;
-      _priceController.clear();
-      _customUnit = null; // Reset custom unit
-    });
   }
 
   @override
@@ -146,7 +123,7 @@ class _BuyItemsState extends State<BuyItems> {
                     children: [
                       // BALANCE
                       Text(
-                        'Available Balance: ₱${balance.toStringAsFixed(2)}',
+                        'Current Balance: ₱${balance.toStringAsFixed(2)}',
                         style: GoogleFonts.quicksand(
                           fontSize: 18,
                           letterSpacing: 0.2,
@@ -155,148 +132,72 @@ class _BuyItemsState extends State<BuyItems> {
                       ),
                       const SizedBox(height: 8),
 
-                      // TOOL TIP
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          '* Press the toggle button to switch between custom and existing categories',
-                          style: GoogleFonts.quicksand(
-                              textStyle:
-                                  const TextStyle(fontStyle: FontStyle.italic),
-                              fontSize: 12,
-                              // fontWeight: FontWeight.w500,
-                              color: Colors.red[700]),
-                        ),
-                      ),
-
                       //  LABEL +TOGGLE SWITCH
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _isCustomCategory
-                              ? Text(
-                                  'Add Custom Category:',
-                                  style: GoogleFonts.quicksand(
-                                    fontSize: 16,
-                                    letterSpacing: 0.2,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              : Text(
-                                  'Select Category:',
-                                  style: GoogleFonts.quicksand(
-                                    fontSize: 16,
-                                    letterSpacing: 0.2,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                          Switch(
-                            value: _isCustomCategory,
-                            onChanged: _switchCategoryMode,
-                            activeColor: const Color(0xffff6600),
-                          ),
-                        ],
+                      Text(
+                        'Select Category:',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 16,
+                          letterSpacing: 0.2,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
 
                       // CATEGORY DROPDOWN/TEXT FIELD
-                      if (!_isCustomCategory)
-                        DropdownButtonFormField<String>(
-                          iconEnabledColor: const Color(0xffff6600),
-                          iconDisabledColor: Colors.grey,
-                          isExpanded: true,
-                          value: _selectedCategory,
-                          hint: Text(
-                            categoryList.isEmpty
-                                ? 'No categories available'
-                                : 'Select a category',
-                            style: GoogleFonts.quicksand(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                          ),
-                          items: categoryList.map((category) {
-                            return DropdownMenuItem<String>(
-                              value: category,
-                              child: Text(
-                                category,
-                                style: GoogleFonts.quicksand(
-                                  fontSize: 16,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedCategory = value;
-                            });
-                          },
-                          style: GoogleFonts.quicksand(
-                            color: Colors.black,
-                          ),
-                          decoration: InputDecoration(
-                            fillColor: Colors.white,
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                          validator: (value) {
-                            if (!_isCustomCategory && value == null) {
-                              return 'Please select a category';
-                            }
-                            return null;
-                          },
-                        ),
-                      if (_isCustomCategory)
-                        TextFormField(
-                          controller: _customCategoryController,
-                          decoration: InputDecoration(
-                            hintText: 'Enter new category',
-                            fillColor: Colors.white,
-                            filled: true,
-                            hintStyle: GoogleFonts.quicksand(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                          validator: (value) {
-                            if (_isCustomCategory &&
-                                (value == null || value.isEmpty)) {
-                              return 'Please enter a custom category';
-                            }
-                            return null;
-                          },
-                          style: GoogleFonts.quicksand(
-                            color: Colors.black,
-                          ),
-                        ),
+                      // const SizedBox(height: 8),
+                      CategoryAutocompleteFormField(
+                        categories: categoryList,
+                        selectedCategory: _selectedCategory,
+                        onSelected: (String? value) {
+                          setState(() {
+                            _selectedCategory = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a category';
+                          }
+                          if (!categoryList.contains(value)) {
+                            return 'Please select a valid category';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 8),
 
                       // AVAILABLE STOCK AND UNIT LABEL
-                      if (!_isCustomCategory && _selectedCategory != null)
-                        Text(
-                          'Current Stock: ${inventory.firstWhere((item) => item['category'] == _selectedCategory)['stock']} ${inventory.firstWhere((item) => item['category'] == _selectedCategory)['unit']}',
-                          style: GoogleFonts.quicksand(
-                              fontSize: 14,
-                              letterSpacing: 0.2,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[700]),
+                      if (_selectedCategory != null)
+                        Row(
+                          children: [
+                            Text(
+                              'Available Stock: ',
+                              style: GoogleFonts.quicksand(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.2,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Text(
+                              '${inventory.firstWhere((item) => item['category'] == _selectedCategory)['stock']} ${inventory.firstWhere((item) => item['category'] == _selectedCategory)['unit']}',
+                              style: GoogleFonts.quicksand(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.green,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ],
                         ),
-
                       const SizedBox(height: 16),
-                      // PRICE
+
+                      // QUANTITY AND PRICE
                       Column(
                         children: [
                           // QUANTITY
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              "Quantity",
+                              "Quantity to Sell",
                               style: GoogleFonts.quicksand(
                                 fontSize: 16,
                                 letterSpacing: 0.2,
@@ -331,10 +232,27 @@ class _BuyItemsState extends State<BuyItems> {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter quantity';
                                     }
-                                    if (int.tryParse(value) == null ||
-                                        int.parse(value) <= 0) {
+                                    if (double.tryParse(value) == null ||
+                                        double.parse(value) <= 0) {
                                       return 'Quantity must be a positive number';
                                     }
+
+                                    // check if quantity is greater than stock
+                                    if (_selectedCategory != null) {
+                                      final categoryIndex =
+                                          inventory.indexWhere((item) =>
+                                              item['category'] ==
+                                              _selectedCategory);
+                                      if (categoryIndex >= 0) {
+                                        final stock = inventory[categoryIndex]
+                                                ['stock'] ??
+                                            0;
+                                        if (double.parse(value) > stock) {
+                                          return 'Quantity exceeds available stock';
+                                        }
+                                      }
+                                    }
+
                                     return null;
                                   },
                                   style: GoogleFonts.quicksand(
@@ -345,8 +263,7 @@ class _BuyItemsState extends State<BuyItems> {
                               const SizedBox(width: 8),
 
                               // UNIT MEASUREMENT
-                              if (!_isCustomCategory &&
-                                  _selectedCategory != null)
+                              if (_selectedCategory != null)
                                 Text(
                                   inventory
                                       .firstWhere(
@@ -363,58 +280,16 @@ class _BuyItemsState extends State<BuyItems> {
                                     letterSpacing: 0.2,
                                   ),
                                 ),
-                              if (_isCustomCategory)
-                                SizedBox(
-                                  width: 100,
-                                  child: DropdownButtonFormField<String>(
-                                    iconEnabledColor: const Color(0xffff6600),
-                                    iconDisabledColor: Colors.grey,
-                                    value: _customUnit,
-                                    hint: Text(
-                                      'Unit',
-                                      style: GoogleFonts.quicksand(
-                                        color: Colors.grey[600],
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    items: ['kg', 'pc/s'].map((unit) {
-                                      return DropdownMenuItem<String>(
-                                        value: unit,
-                                        child: Text(
-                                          unit,
-                                          style: GoogleFonts.quicksand(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _customUnit = value;
-                                      });
-                                    },
-                                    validator: (value) =>
-                                        value == null ? 'Select a unit' : null,
-                                    decoration: InputDecoration(
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                    ),
-                                  ),
-                                ),
                             ],
                           ),
+
                           const SizedBox(height: 16),
 
                           // PRICE
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              "Buying Price",
+                              "Selling Price",
                               style: GoogleFonts.quicksand(
                                 fontSize: 16,
                                 letterSpacing: 0.2,
@@ -465,9 +340,7 @@ class _BuyItemsState extends State<BuyItems> {
                                         enteredPrice! <= 0) {
                                       return 'Price must be a positive number';
                                     }
-                                    if (enteredPrice! > balance) {
-                                      return 'Price cannot exceed available balance';
-                                    }
+
                                     return null;
                                   },
                                   style: GoogleFonts.quicksand(),
@@ -479,7 +352,7 @@ class _BuyItemsState extends State<BuyItems> {
                         ],
                       ),
 
-                      // BUY BUTTON
+                      // SELL BUTTON
                       Center(
                         child: SizedBox(
                           width: 300,
@@ -488,28 +361,13 @@ class _BuyItemsState extends State<BuyItems> {
                             onTap: () async {
                               if (_formKey.currentState!.validate()) {
                                 // Get the category name and unit based on selection mode
-                                String categoryName = _isCustomCategory
-                                    ? _customCategoryController.text.trim()
-                                    : _selectedCategory ?? '';
-                                String unit = _isCustomCategory
-                                    ? _customUnit ?? ''
-                                    : inventory.firstWhere((item) =>
-                                            item['category'] ==
-                                            categoryName)['unit'] ??
-                                        '';
+                                String categoryName = _selectedCategory!;
+                                String unit = inventory.firstWhere((item) =>
+                                    item['category']! == categoryName)['unit']!;
                                 double quantity =
                                     double.tryParse(_quantityController.text) ??
                                         0;
-                                double newBalance = balance - enteredPrice;
-
-                                // Check if category already exists
-                                if (_isCustomCategory) {
-                                  if (_categoryExists(
-                                      categoryName, inventory)) {
-                                    return _showErrorSnackBar(
-                                        'Category "$categoryName" already exists. Please switch to "Select Category" mode to proceed.');
-                                  }
-                                }
+                                double newBalance = balance + enteredPrice;
 
                                 // Show confirmation dialog
                                 bool? confirmed = await showDialog<bool>(
@@ -517,7 +375,7 @@ class _BuyItemsState extends State<BuyItems> {
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       title: Text(
-                                        'Confirm Purchase',
+                                        'Confirm Sale',
                                         style: GoogleFonts.quicksand(
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -577,83 +435,52 @@ class _BuyItemsState extends State<BuyItems> {
                                     _isLoading = true;
                                   });
                                   try {
-                                    if (_isCustomCategory) {
-                                      categoryName =
-                                          _customCategoryController.text.trim();
-                                      unit = _customUnit ?? '';
-                                      if (categoryName.isEmpty) {
-                                        throw Exception(
-                                            'Category name cannot be empty');
-                                      }
-                                      if (unit.isEmpty) {
-                                        throw Exception(
-                                            'Unit must be selected');
-                                      }
+                                    if (_selectedCategory == null ||
+                                        _selectedCategory!.isEmpty) {
+                                      throw Exception(
+                                          'Selected category cannot be empty');
+                                    }
+                                    categoryName = _selectedCategory!;
 
-                                      await _inventoryController
-                                          .uploadInventoryEntry(
-                                        categoryName,
-                                        double.parse(_quantityController.text),
-                                        unit,
-                                        widget.junkShopData['junkShopId'],
-                                      );
+                                    final categoryIndex = inventory.indexWhere(
+                                        (item) =>
+                                            item['category'] == categoryName);
+
+                                    if (categoryIndex >= 0) {
+                                      final existingItem =
+                                          inventory[categoryIndex];
+                                      unit = existingItem['unit'] ?? '';
+                                      final updatedQuantity =
+                                          (existingItem['stock'] ?? 0) -
+                                              double.parse(
+                                                  _quantityController.text);
 
                                       await _firestore
                                           .collection('junk_shops')
                                           .doc(
                                               widget.junkShopData['junkShopId'])
                                           .update({
-                                        'junkShopBalance':
-                                            balance - enteredPrice,
+                                        'junkShopInventory':
+                                            FieldValue.arrayRemove(
+                                                [existingItem]),
                                       });
-                                    } else {
-                                      if (_selectedCategory == null ||
-                                          _selectedCategory!.isEmpty) {
-                                        throw Exception(
-                                            'Selected category cannot be empty');
-                                      }
-                                      categoryName = _selectedCategory!;
 
-                                      final categoryIndex =
-                                          inventory.indexWhere((item) =>
-                                              item['category'] == categoryName);
+                                      final updatedItem = {
+                                        ...existingItem,
+                                        'stock': updatedQuantity,
+                                      };
 
-                                      if (categoryIndex >= 0) {
-                                        final existingItem =
-                                            inventory[categoryIndex];
-                                        unit = existingItem['unit'] ?? '';
-                                        final updatedQuantity =
-                                            (existingItem['stock'] ?? 0) +
-                                                double.parse(
-                                                    _quantityController.text);
-
-                                        await _firestore
-                                            .collection('junk_shops')
-                                            .doc(widget
-                                                .junkShopData['junkShopId'])
-                                            .update({
-                                          'junkShopInventory':
-                                              FieldValue.arrayRemove(
-                                                  [existingItem]),
-                                        });
-
-                                        final updatedItem = {
-                                          ...existingItem,
-                                          'stock': updatedQuantity,
-                                        };
-
-                                        await _firestore
-                                            .collection('junk_shops')
-                                            .doc(widget
-                                                .junkShopData['junkShopId'])
-                                            .update({
-                                          'junkShopInventory':
-                                              FieldValue.arrayUnion(
-                                                  [updatedItem]),
-                                          'junkShopBalance':
-                                              balance - enteredPrice,
-                                        });
-                                      }
+                                      await _firestore
+                                          .collection('junk_shops')
+                                          .doc(
+                                              widget.junkShopData['junkShopId'])
+                                          .update({
+                                        'junkShopInventory':
+                                            FieldValue.arrayUnion(
+                                                [updatedItem]),
+                                        'junkShopBalance':
+                                            balance + enteredPrice,
+                                      });
                                     }
 
                                     // Create transaction entry with quantity and unit
@@ -662,30 +489,24 @@ class _BuyItemsState extends State<BuyItems> {
                                       final quantity = _quantityController.text;
                                       await _transactionController
                                           .uploadTransactionEntry(
-                                        'Buy ($quantity $unit) $categoryName',
-                                        -enteredPrice!,
+                                        'Sell ($quantity $unit) $categoryName',
+                                        enteredPrice!,
                                         widget.junkShopData['junkShopId'],
                                       );
                                     }
 
                                     // Clear form after successful submission
-                                    if (_isCustomCategory) {
-                                      _customCategoryController.clear();
-                                      setState(() {
-                                        _customUnit = null;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        _selectedCategory = null;
-                                      });
-                                    }
+
+                                    setState(() {
+                                      _selectedCategory = null;
+                                    });
+
                                     _quantityController.clear();
                                     _priceController
                                         .clear(); // Clear price after successful purchase
 
                                     // Show success message
-                                    _showSuccessSnackBar(
-                                        'Purchase successful!');
+                                    _showSuccessSnackBar('Sale successful!');
                                   } catch (e) {
                                     _showErrorSnackBar(e);
                                   } finally {
@@ -722,7 +543,7 @@ class _BuyItemsState extends State<BuyItems> {
                                         color: Colors.white,
                                       )
                                     : Text(
-                                        "BUY",
+                                        "SELL",
                                         style: GoogleFonts.quicksand(
                                           fontSize: 16,
                                           color: Colors.white,
@@ -743,6 +564,117 @@ class _BuyItemsState extends State<BuyItems> {
           );
         },
       ),
+    );
+  }
+}
+
+// Add this class definition after _SellItemsState class
+class CategoryAutocompleteFormField extends StatelessWidget {
+  final List<String> categories;
+  final String? selectedCategory;
+  final Function(String?) onSelected;
+  final String? Function(String?)? validator;
+
+  const CategoryAutocompleteFormField({
+    super.key,
+    required this.categories,
+    required this.selectedCategory,
+    required this.onSelected,
+    this.validator,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Autocomplete<String>(
+      initialValue: TextEditingValue(text: selectedCategory ?? ''),
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty) {
+          return categories;
+        }
+        return categories.where((category) => category
+            .toLowerCase()
+            .contains(textEditingValue.text.toLowerCase()));
+      },
+      onSelected: onSelected,
+      fieldViewBuilder: (
+        BuildContext context,
+        TextEditingController controller,
+        FocusNode focusNode,
+        VoidCallback onFieldSubmitted,
+      ) {
+        return TextFormField(
+          controller: controller,
+          focusNode: focusNode,
+          decoration: InputDecoration(
+            hintText: categories.isEmpty
+                ? 'No categories available'
+                : 'Type or select a category',
+            hintStyle: GoogleFonts.quicksand(
+              color: Colors.grey[600],
+              fontSize: 14,
+            ),
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none,
+            ),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.arrow_drop_down),
+              color: const Color(0xffff6600),
+              onPressed: () {
+                if (!focusNode.hasFocus) {
+                  focusNode.requestFocus();
+                }
+              },
+            ),
+          ),
+          validator: validator,
+          style: GoogleFonts.quicksand(
+            color: Colors.black,
+          ),
+        );
+      },
+      optionsViewBuilder: (
+        BuildContext context,
+        void Function(String) onSelected,
+        Iterable<String> options,
+      ) {
+        return Align(
+          alignment: Alignment.topLeft,
+          child: Material(
+            elevation: 4,
+            child: Container(
+              width: MediaQuery.of(context).size.width - 32,
+              constraints: const BoxConstraints(maxHeight: 200),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: options.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final String option = options.elementAt(index);
+                  return InkWell(
+                    onTap: () {
+                      onSelected(option);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        option,
+                        style: GoogleFonts.quicksand(fontSize: 16),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

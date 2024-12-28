@@ -386,6 +386,7 @@ class _RegisterNewStaffScreenState extends State<RegisterNewStaffScreen> {
                         // validate user input to force valid input
                         return 'Enter Email';
                       }
+                      return null;
                     },
                     decoration: InputDecoration(
                       fillColor: Colors.white,
@@ -428,6 +429,7 @@ class _RegisterNewStaffScreenState extends State<RegisterNewStaffScreen> {
                         // validate user input to force valid input
                         return 'Enter Password';
                       }
+                      return null;
                     },
                     decoration: InputDecoration(
                       fillColor: Colors.white,

@@ -568,7 +568,6 @@ class _SellItemsState extends State<SellItems> {
   }
 }
 
-// Add this class definition after _SellItemsState class
 class CategoryAutocompleteFormField extends StatelessWidget {
   final List<String> categories;
   final String? selectedCategory;
