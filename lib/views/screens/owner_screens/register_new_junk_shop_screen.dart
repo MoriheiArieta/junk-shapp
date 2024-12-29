@@ -269,9 +269,11 @@ class _RegisterNewJunkShopScreenState extends State<RegisterNewJunkShopScreen> {
                               return null;
                             }
                           },
-                          keyboardType: TextInputType.number,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d*')),
                           ],
                           decoration: InputDecoration(
                             fillColor: Colors.white,
