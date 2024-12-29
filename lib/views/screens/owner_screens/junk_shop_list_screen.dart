@@ -77,6 +77,15 @@ class JunkShopListScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white.withOpacity(0.96),
         appBar: AppBar(
+          leading: InkWell(
+            onTap: () {
+              _showLogoutConfirmationDialog(context);
+            },
+            child: const Icon(
+              Icons.logout_sharp,
+              color: Colors.white,
+            ),
+          ),
           centerTitle: true,
           automaticallyImplyLeading: false,
           title: Text(

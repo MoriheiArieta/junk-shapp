@@ -41,4 +41,17 @@ class JunkShopController {
 
     return result;
   }
+
+  // FETCH JUNK SHOP DETAILS
+  Future<Map<String, dynamic>?> getJunkShopDetails(String junkShopId) async {
+    final junkShopDoc = await _firestore
+        .collection('junk_shops')
+        .doc(junkShopId)
+        .get();
+
+    if (junkShopDoc.exists) {
+      return junkShopDoc.data();
+    }
+    return null;
+  }
 }

@@ -1,5 +1,6 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,9 +46,9 @@ class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
                   children: [
                     CircleAvatar(
                       radius: 30,
-                      backgroundImage: NetworkImage(
-                        widget.userData?['profilePic'] ??
-                            'https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png',
+                      backgroundImage: CachedNetworkImageProvider(
+                        widget.userData?['profileImage'] ??
+                            'https://www.pngkey.com/png/detail/202-2024792_user-profile-icon-png-download-fa-user-circle.png',
                       ),
                     ),
                     SizedBox(width: screenWidth * 0.04),

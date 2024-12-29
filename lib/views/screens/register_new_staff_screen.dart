@@ -379,7 +379,7 @@ class _RegisterNewStaffScreenState extends State<RegisterNewStaffScreen> {
                   ),
                   TextFormField(
                     onChanged: (value) {
-                      _email = value;
+                      _email = value.trim();
                     },
                     validator: (value) {
                       if (value!.isEmpty) {

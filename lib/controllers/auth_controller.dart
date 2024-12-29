@@ -70,4 +70,31 @@ class AuthController {
     }
     return false; // Return null if there's an error or no matching document
   }
+
+  // FETCH JUNSKSHOPID FROM NON-OWNER USERS
+  Future<String?> getJunkShopIdForStaff(String userId) async {
+    final staffDoc = await _firestore.collection('users').doc(userId).get();
+
+    if (staffDoc.exists) {
+      return staffDoc.data()?['junkShopId'] as String?;
+    }
+    return null;
+  }
+
+  //FETCH STAFF DATA
+  Future<Map<String, dynamic>?> getStaffData(String userId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('users').doc(userId).get();
+      if (snapshot.exists) {
+        Map<String, dynamic> staffData =
+            snapshot.data() as Map<String, dynamic>;
+
+        return staffData;
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
+  }
 }

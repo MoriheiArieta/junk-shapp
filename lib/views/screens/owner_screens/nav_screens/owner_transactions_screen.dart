@@ -54,16 +54,20 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
 
         fetchMoreTransactions();
       } else {
-        setState(() {
-          hasMoreData = false;
-        });
+        if (mounted) {
+          setState(() {
+            hasMoreData = false;
+          });
+        }
       }
     } catch (e) {
       debugPrint('Error fetching transactions: $e');
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -130,83 +134,89 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
             ),
           ),
           Expanded(
-            child: displayedTransactions.isEmpty && !isLoading
-                ? const Center(
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: _firestore
+                  .collection('junk_shops')
+                  .doc(widget.junkShopData['junkShopId'])
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return const Center(
                     child: Text(
                       'No transactions found',
                       style: TextStyle(fontSize: 18),
                     ),
-                  )
-                : NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification scrollInfo) {
-                      if (scrollInfo.metrics.pixels ==
-                              scrollInfo.metrics.maxScrollExtent &&
-                          hasMoreData &&
-                          !isLoading) {
-                        fetchMoreTransactions();
-                      }
-                      return true;
-                    },
-                    child: ListView.builder(
-                      itemCount:
-                          displayedTransactions.length + (hasMoreData ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index < displayedTransactions.length) {
-                          final transaction = displayedTransactions[index];
-                          return Column(
-                            children: [
-                              ListTile(
-                                title: Text(
-                                  transaction['transactionTimestamp'],
-                                  style: GoogleFonts.quicksand(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  transaction['transactionType'],
-                                  style: GoogleFonts.quicksand(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                trailing: transaction['amount'].isNegative
-                                    ? Text(
-                                        transaction['amount'].toString(),
-                                        style: GoogleFonts.quicksand(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.redAccent.shade700,
-                                        ),
-                                      )
-                                    : Text(
-                                        "+${transaction['amount'].toString()}",
-                                        style: GoogleFonts.quicksand(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green.shade700,
-                                        ),
-                                      ),
-                              ),
-                              const Divider(
-                                height: 0,
-                                thickness: 1,
-                                color: Colors.grey,
-                              ),
-                            ],
-                          );
-                        } else {
-                          return null;
+                  );
+                }
 
-                          // const Padding(
-                          //   padding: EdgeInsets.all(8.0),
-                          //   child: Center(
-                          //     child: CircularProgressIndicator(),
-                          //   ),
-                          // );
-                        }
-                      },
-                    )),
+                List<dynamic> transactions = List<Map<String, dynamic>>.from(
+                    snapshot.data!['junkShopTransactions'] ?? []);
+
+                // Sort transactions by timestamp in descending order
+                transactions.sort((a, b) {
+                  DateTime dateA = DateFormat('MMMM dd yyyy HH:mm:ss a')
+                      .parse(a['transactionTimestamp']);
+                  DateTime dateB = DateFormat('MMMM dd yyyy HH:mm:ss a')
+                      .parse(b['transactionTimestamp']);
+                  return dateB.compareTo(dateA);
+                });
+
+                return ListView.builder(
+                  itemCount: transactions.length,
+                  itemBuilder: (context, index) {
+                    final transaction = transactions[index];
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            transaction['transactionTimestamp'],
+                            style: GoogleFonts.quicksand(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          subtitle: Text(
+                            transaction['transactionType'],
+                            style: GoogleFonts.quicksand(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          trailing: transaction['amount'].isNegative
+                              ? Text(
+                                  transaction['amount'].toString(),
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.redAccent.shade700,
+                                  ),
+                                )
+                              : Text(
+                                  "+${transaction['amount'].toString()}",
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green.shade700,
+                                  ),
+                                ),
+                        ),
+                        const Divider(
+                          height: 0,
+                          thickness: 1,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
