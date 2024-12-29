@@ -15,32 +15,84 @@ class OwnerTransactionsScreen extends StatefulWidget {
 
 class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final int batchSize = 10;
 
-  List<Map<String, dynamic>> _sortTransactions(List<dynamic> transactions) {
-    // Convert to List<Map<String, dynamic>> and parse timestamps
-    List<Map<String, dynamic>> sortableTransactions =
-        transactions.map((transaction) {
-      return Map<String, dynamic>.from(transaction);
-    }).toList();
+  List<dynamic> allTransactions = [];
+  List<dynamic> displayedTransactions = [];
+  bool isLoading = false;
+  bool hasMoreData = true;
 
-    // Sort the transactions
-    sortableTransactions.sort((a, b) {
-      DateTime dateA = DateFormat('MMMM dd yyyy HH:mm:ss a')
-          .parse(a['transactionTimestamp']);
-      DateTime dateB = DateFormat('MMMM dd yyyy HH:mm:ss a')
-          .parse(b['transactionTimestamp']);
-      return dateB.compareTo(dateA); // Descending order (most recent first)
+  @override
+  void initState() {
+    super.initState();
+    fetchAllTransactions();
+  }
+
+  Future<void> fetchAllTransactions() async {
+    setState(() {
+      isLoading = true;
     });
 
-    return sortableTransactions;
+    try {
+      DocumentSnapshot junkShopDoc = await _firestore
+          .collection('junk_shops')
+          .doc(widget.junkShopData['junkShopId'])
+          .get();
+
+      if (junkShopDoc.exists) {
+        allTransactions = List<Map<String, dynamic>>.from(
+          junkShopDoc['junkShopTransactions'] ?? [],
+        );
+
+        allTransactions.sort((a, b) {
+          DateTime dateA = DateFormat('MMMM dd yyyy HH:mm:ss a')
+              .parse(a['transactionTimestamp']);
+          DateTime dateB = DateFormat('MMMM dd yyyy HH:mm:ss a')
+              .parse(b['transactionTimestamp']);
+          return dateB.compareTo(dateA); // Descending order
+        });
+
+        fetchMoreTransactions();
+      } else {
+        setState(() {
+          hasMoreData = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching transactions: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void fetchMoreTransactions() {
+    if (displayedTransactions.length >= allTransactions.length) {
+      setState(() {
+        hasMoreData = false;
+      });
+      return;
+    }
+
+    int nextBatchEnd = displayedTransactions.length + batchSize;
+    setState(() {
+      displayedTransactions.addAll(
+        allTransactions.sublist(
+          displayedTransactions.length,
+          nextBatchEnd > allTransactions.length
+              ? allTransactions.length
+              : nextBatchEnd,
+        ),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    DateTime _asOf = DateTime.now();
-    String _formattedDateTime = DateFormat('MMMM dd yyyy').format(_asOf);
+    String _formattedDateTime =
+        DateFormat('MMMM dd yyyy').format(DateTime.now());
 
     return Scaffold(
       appBar: AppBar(
@@ -56,102 +108,107 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
           ),
         ),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: _firestore
-            .collection('junk_shops')
-            .doc(widget.junkShopData['junkShopId'])
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text('No transactions available'));
-          }
-
-          final transactions = _sortTransactions(
-            List<dynamic>.from(snapshot.data!['junkShopTransactions']),
-          );
-
-          if (transactions.isEmpty) {
-            return const Center(
-                child: Text(
-              'No transactions found',
-              style: TextStyle(fontSize: 18),
-            ));
-          }
-
-          return Column(
-            children: [
-              const Divider(
-                thickness: 1,
-                height: 1,
-                color: Colors.deepOrange,
+      body: Column(
+        children: [
+          const Divider(
+            thickness: 1,
+            height: 1,
+            color: Colors.deepOrange,
+          ),
+          Container(
+            width: screenWidth,
+            decoration: const BoxDecoration(color: Color(0xfffe6600)),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
+              child: Text(
+                'As of $_formattedDateTime',
+                style: GoogleFonts.quicksand(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              Container(
-                width: screenWidth,
-                decoration: const BoxDecoration(color: Color(0xfffe6600)),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
-                  child: Text(
-                    'As of $_formattedDateTime',
-                    style: GoogleFonts.quicksand(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+            ),
+          ),
+          Expanded(
+            child: displayedTransactions.isEmpty && !isLoading
+                ? const Center(
+                    child: Text(
+                      'No transactions found',
+                      style: TextStyle(fontSize: 18),
                     ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: transactions.length,
-                  itemBuilder: (context, index) {
-                    final transaction = transactions[index];
-                    return ListTile(
-                      title: Text(
-                        transaction['transactionTimestamp'],
-                        style: GoogleFonts.quicksand(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      subtitle: Text(
-                        transaction['transactionType'],
-                        style: GoogleFonts.quicksand(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      shape: const Border(
-                        bottom: BorderSide(),
-                      ),
-                      trailing: transaction['amount'].isNegative
-                          ? Text(
-                              transaction['amount'].toString(),
-                              style: GoogleFonts.quicksand(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.redAccent.shade700,
+                  )
+                : NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent &&
+                          hasMoreData &&
+                          !isLoading) {
+                        fetchMoreTransactions();
+                      }
+                      return true;
+                    },
+                    child: ListView.builder(
+                      itemCount:
+                          displayedTransactions.length + (hasMoreData ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index < displayedTransactions.length) {
+                          final transaction = displayedTransactions[index];
+                          return Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  transaction['transactionTimestamp'],
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  transaction['transactionType'],
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailing: transaction['amount'].isNegative
+                                    ? Text(
+                                        transaction['amount'].toString(),
+                                        style: GoogleFonts.quicksand(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.redAccent.shade700,
+                                        ),
+                                      )
+                                    : Text(
+                                        "+${transaction['amount'].toString()}",
+                                        style: GoogleFonts.quicksand(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green.shade700,
+                                        ),
+                                      ),
                               ),
-                            )
-                          : Text(
-                              "+${transaction['amount'].toString()}",
-                              style: GoogleFonts.quicksand(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green.shade700,
+                              const Divider(
+                                height: 0,
+                                thickness: 1,
+                                color: Colors.grey,
                               ),
-                            ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        },
+                            ],
+                          );
+                        } else {
+                          return null;
+
+                          // const Padding(
+                          //   padding: EdgeInsets.all(8.0),
+                          //   child: Center(
+                          //     child: CircularProgressIndicator(),
+                          //   ),
+                          // );
+                        }
+                      },
+                    )),
+          ),
+        ],
       ),
     );
   }

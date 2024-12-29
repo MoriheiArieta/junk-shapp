@@ -86,15 +86,17 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       } else {
         // Handle case where user email doesn't match the authenticated email
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: const Color(0xfffe7800),
-            content: Text(
-              "Authentication mismatch. Please try again.",
-              style: GoogleFonts.lato(color: Colors.white),
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xfffe7800),
+              content: Text(
+                "Authentication mismatch. Please try again.",
+                style: GoogleFonts.lato(color: Colors.white),
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
     } else {
       // Show error message for failed login attempts

@@ -72,7 +72,7 @@ class _SellItemsState extends State<SellItems> {
         backgroundColor: const Color(0xffff6600),
         centerTitle: true,
         title: Text(
-          "Buy Items",
+          "Sell Items",
           style: GoogleFonts.quicksand(
             fontWeight: FontWeight.w500,
             color: Colors.white,

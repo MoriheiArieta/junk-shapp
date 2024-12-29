@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -160,6 +161,24 @@ class _JunkShopListItemWidgetState extends State<JunkShopListItemWidget> {
                             'junkShops': FieldValue.arrayRemove(
                                 [widget.junkShopData['junkShopId']]),
                           });
+                          //delete staff profile images from firebase storage
+                          List<dynamic> junkShopStaff =
+                              widget.junkShopData['junkShopStaff'];
+                          // for (String staffId in junkShopStaff) {
+                          //   await FirebaseStorage.instance
+                          //       .ref()
+                          //       .child('profile_images/$staffId')
+                          //       .delete();
+                          // }
+
+                          // delete users from the junk shop's junkShopStaff array
+                          for (String staffId in junkShopStaff) {
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(staffId)
+                                .delete();
+                          }
+
                           // Attempt to delete the junk shop
                           String result =
                               await _junkShopController.deleteJunkShop(

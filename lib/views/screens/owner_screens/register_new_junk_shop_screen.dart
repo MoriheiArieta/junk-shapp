@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +11,9 @@ import 'package:junk_shapp/controllers/junk_shop_controller.dart';
 import 'package:uuid/uuid.dart';
 
 class RegisterNewJunkShopScreen extends StatefulWidget {
-  const RegisterNewJunkShopScreen({super.key});
+  final dynamic user;
+
+  const RegisterNewJunkShopScreen({super.key, this.user});
 
   @override
   State<RegisterNewJunkShopScreen> createState() =>
@@ -24,7 +26,7 @@ class _RegisterNewJunkShopScreenState extends State<RegisterNewJunkShopScreen> {
   final ImagePicker _imagePicker = ImagePicker();
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late String _junkShopId;
   late String _junkShopName;
@@ -81,9 +83,9 @@ class _RegisterNewJunkShopScreenState extends State<RegisterNewJunkShopScreen> {
         _junkShopId);
     if (result == 'pass') {
       try {
-        final user = _auth.currentUser;
+        // final user = _auth.currentUser;
 
-        await _firestore.collection('users').doc(user!.uid).update({
+        await _firestore.collection('users').doc(widget.user!.uid).update({
           'junkShops': FieldValue.arrayUnion([_junkShopId]),
         });
         setState(() {

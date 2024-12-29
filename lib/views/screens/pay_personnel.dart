@@ -320,24 +320,30 @@ class _PayPersonnelState extends State<PayPersonnel> {
                                       });
                                       try {
                                         // record transaction
-                                        await _transactionController
-                                            .uploadTransactionEntry(
-                                                'Pay $_selectedPersonnel',
-                                                -_paymentAmount!,
-                                                widget.junkShopData[
-                                                    'junkShopId']);
-
-                                        // UPDATE JUNK SHOP BALANCE
-                                        await _firestore
-                                            .collection('junk_shops')
-                                            .doc(widget
-                                                .junkShopData['junkShopId'])
-                                            .update({
-                                          'junkShopBalance':
-                                              balance - _paymentAmount!
-                                        });
+                                        String result =
+                                            await _transactionController
+                                                .uploadTransactionEntry(
+                                                    'Pay $_selectedPersonnel',
+                                                    -_paymentAmount!,
+                                                    widget.junkShopData[
+                                                        'junkShopId']);
+                                        if (result == 'pass') {
+                                          // UPDATE JUNK SHOP BALANCE
+                                          await _firestore
+                                              .collection('junk_shops')
+                                              .doc(widget
+                                                  .junkShopData['junkShopId'])
+                                              .update({
+                                            'junkShopBalance':
+                                                balance - _paymentAmount!
+                                          });
+                                        }
 
                                         // CLEAR FORMS AFTER SUCCESSFUL SUBMISSION
+                                        setState(() {
+                                          _paymentController.clear();
+                                          _selectedPersonnel = null;
+                                        });
 
                                         _showSuccessSnackBar(
                                             "Payment successful!");
