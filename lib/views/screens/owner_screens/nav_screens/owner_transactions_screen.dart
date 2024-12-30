@@ -13,65 +13,23 @@ class OwnerTransactionsScreen extends StatefulWidget {
       _OwnerTransactionsScreenState();
 }
 
-class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
+class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen>
+    with AutomaticKeepAliveClientMixin {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final int batchSize = 10;
 
-  List<dynamic> allTransactions = [];
   List<dynamic> displayedTransactions = [];
-  bool isLoading = false;
   bool hasMoreData = true;
 
   @override
   void initState() {
     super.initState();
-    fetchAllTransactions();
   }
 
-  Future<void> fetchAllTransactions() async {
-    setState(() {
-      isLoading = true;
-    });
+  @override
+  bool get wantKeepAlive => true;
 
-    try {
-      DocumentSnapshot junkShopDoc = await _firestore
-          .collection('junk_shops')
-          .doc(widget.junkShopData['junkShopId'])
-          .get();
-
-      if (junkShopDoc.exists) {
-        allTransactions = List<Map<String, dynamic>>.from(
-          junkShopDoc['junkShopTransactions'] ?? [],
-        );
-
-        allTransactions.sort((a, b) {
-          DateTime dateA = DateFormat('MMMM dd yyyy HH:mm:ss a')
-              .parse(a['transactionTimestamp']);
-          DateTime dateB = DateFormat('MMMM dd yyyy HH:mm:ss a')
-              .parse(b['transactionTimestamp']);
-          return dateB.compareTo(dateA); // Descending order
-        });
-
-        fetchMoreTransactions();
-      } else {
-        if (mounted) {
-          setState(() {
-            hasMoreData = false;
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint('Error fetching transactions: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
-  }
-
-  void fetchMoreTransactions() {
+  void fetchMoreTransactions(List<dynamic> allTransactions) {
     if (displayedTransactions.length >= allTransactions.length) {
       setState(() {
         hasMoreData = false;
@@ -94,8 +52,10 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final screenWidth = MediaQuery.of(context).size.width;
-    String _formattedDateTime =
+    String formattedDateTime =
         DateFormat('MMMM dd yyyy').format(DateTime.now());
 
     return Scaffold(
@@ -125,7 +85,7 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
               child: Text(
-                'As of $_formattedDateTime',
+                'As of $formattedDateTime',
                 style: GoogleFonts.quicksand(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -155,11 +115,11 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
                   );
                 }
 
-                List<dynamic> transactions = List<Map<String, dynamic>>.from(
+                // Process transactions locally without using setState
+                List<dynamic> allTransactions = List<Map<String, dynamic>>.from(
                     snapshot.data!['junkShopTransactions'] ?? []);
 
-                // Sort transactions by timestamp in descending order
-                transactions.sort((a, b) {
+                allTransactions.sort((a, b) {
                   DateTime dateA = DateFormat('MMMM dd yyyy HH:mm:ss a')
                       .parse(a['transactionTimestamp']);
                   DateTime dateB = DateFormat('MMMM dd yyyy HH:mm:ss a')
@@ -167,10 +127,13 @@ class _OwnerTransactionsScreenState extends State<OwnerTransactionsScreen> {
                   return dateB.compareTo(dateA);
                 });
 
+                List<dynamic> visibleTransactions = allTransactions.sublist(
+                    0, displayedTransactions.length + batchSize);
+
                 return ListView.builder(
-                  itemCount: transactions.length,
+                  itemCount: visibleTransactions.length,
                   itemBuilder: (context, index) {
-                    final transaction = transactions[index];
+                    final transaction = visibleTransactions[index];
                     return Column(
                       children: [
                         ListTile(
