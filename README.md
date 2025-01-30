@@ -1,16 +1,9 @@
-# junk_shapp
+# Junk ShApp
 
-A new Flutter project.
+Inventory and Personnel Management Mobile Application for Junk Shops
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Make sure to have Flutter and Firebase installed correctly on your chosen IDE and device.
+* Get all dependencies and packages.
+* Run on an emulator or physical device (enable USB debugging).
