@@ -1,6 +1,6 @@
 # Junk ShApp
 
-Inventory and Personnel Management Mobile Application for Junk Shops
+Junk Shop Inventory and Personnel Management Mobile Application
 
 ## Getting Started
 
