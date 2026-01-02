@@ -63,30 +63,42 @@ flutter run
 <!-- SCREENSHOTS -->
 ## Screenshots
 <div align="center">
-  <div>
+  <table>
+    <tr>
+      <td align="center">
         <img src="assets/login.png" alt="Login" width="200"/>
-    <p>Login Screen</p>
-  </div>
-  <div>
-    <img src="assets/jslist.png" alt="JSList" width="200"/>
-    <p>Junk Shop List</p>
-  </div>
-  <div>
-    <img src="assets/jshome.png" alt="Home" width="200"/>
-    <p>Home</p>
-  </div>
-  <div>
-    <img src="assets/inventory.png" alt="Inventory" width="200"/>
-    <p>Inventory</p>
-  </div>
-  <div>
-    <img src="assets/transactions.png" alt="Transactions" width="200"/>
-    <p>Transactions</p>
-  </div>
-  <div>
-    <img src="assets/personnel.png" alt="Personnel" width="200"/>
-    <p>Personnel</p>
-  </div>
+        <br />
+        <b>Login Screen</b>
+      </td>
+      <td align="center">
+        <img src="assets/jslist.png" alt="JSList" width="200"/>
+        <br />
+        <b>Junk Shop List</b>
+      </td>
+      <td align="center">
+        <img src="assets/jshome.png" alt="Home" width="200"/>
+        <br />
+        <b>Home</b>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="assets/inventory.png" alt="Inventory" width="200"/>
+        <br />
+        <b>Inventory</b>
+      </td>
+      <td align="center">
+        <img src="assets/transactions.png" alt="Transactions" width="200"/>
+        <br />
+        <b>Transactions</b>
+      </td>
+      <td align="center">
+        <img src="assets/personnel.png" alt="Personnel" width="200"/>
+        <br />
+        <b>Personnel</b>
+      </td>
+    </tr>
+  </table>
 </div>
 
 
